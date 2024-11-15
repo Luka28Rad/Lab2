@@ -29,7 +29,7 @@ public class Boom : NetworkBehaviour
         if (other.CompareTag("Player"))
         {
             other.GetComponent<PlayerManager>().TriggerExplosion();
-            DestroyNetworkObjectServerRpc();
+            Destroy(gameObject);
         }
     }
 }
