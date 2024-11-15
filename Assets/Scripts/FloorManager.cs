@@ -28,6 +28,11 @@ public class FloorManager : NetworkBehaviour
         }
     }
 
+    public void Explosion(Color color, string player)
+    {
+        ColorFloorRpc(color, player);
+    }
+
     public void ActivateFloor()
     {
         active = true;

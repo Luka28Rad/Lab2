@@ -11,6 +11,7 @@ public class PlayerManager : NetworkBehaviour
     private Vector3 spawnPoint2 = new Vector3(0f, 1.5f, 11f);
     private bool canMove = false;
     private MeshRenderer playerMeshRenderer;
+    public LayerMask floorLayer;
     //TODO: this network variable needs to be readable by everyone and can be written only by owner
     private NetworkVariable<FixedString512Bytes> playerName = new NetworkVariable<FixedString512Bytes>(default, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
 
@@ -117,4 +118,32 @@ public class PlayerManager : NetworkBehaviour
         gameManager.PlayerReady();
     }
 
+    public void TriggerExplosion()
+    {
+        if (IsServer)
+        {
+            Collider[] hitColliders = Physics.OverlapSphere(transform.position, 3, floorLayer);
+
+            foreach (var hitCollider in hitColliders)
+            {
+                var floor = hitCollider.GetComponent<FloorManager>();
+                if (floor != null)
+                {
+                    Color floorColor = playerMeshRenderer.material.color;
+                    string playerName = GetPlayerName();
+                    floor.Explosion(floorColor, playerName);
+                }
+            }
+        }
+        else
+        {
+            TriggerExplosionServerRpc();
+        }
+    }
+
+    [ServerRpc]
+    private void TriggerExplosionServerRpc()
+    {
+        TriggerExplosion();
+    }
 }

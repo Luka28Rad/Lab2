@@ -281,6 +281,8 @@ public class GameManager : NetworkBehaviour
                 playerManager.EnableMovement();
             }
         }
+
+        gameObject.GetComponent<BoomSpawner>().enabled = true;
     }
 
     void DisablePlayerMovement()
@@ -296,6 +298,15 @@ public class GameManager : NetworkBehaviour
                 playerManager.DisableMovement();
             }
         }
+
+        var booms = GameObject.FindGameObjectsWithTag("Boom");
+
+        foreach (GameObject boom in booms)
+        {
+            boom.GetComponent<Boom>().DestroyNetworkObjectServerRpc();
+        }
+
+        gameObject.GetComponent<BoomSpawner>().enabled = false;
     }
 
     void ResetPlayerPosition()
